@@ -25,3 +25,8 @@ If [Save] and [Change] are enabled the navigation buttons must all be disabled.
 6.Clicking on [Reset] will go back to step-1.
 
 7.Clicking on [Change] will update the current record after all validations and go back to step-1.
+
+![](/public_html/images/Nav-Load.png)
+![](/public_html/images/Nav-New.png)
+![](/public_html/images/Nav-Reset.png)
+![](/public_html/images/Nav-Edit.png)
