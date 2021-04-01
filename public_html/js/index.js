@@ -163,10 +163,10 @@ function getFirst() {
     var result = executeCommand(getFirstRequest, irlPartUrl);
     showData(result);
     jQuery.ajaxSetup({async: true});
-    $("#empid").prop("disabled", true);
     $("#first").prop("disabled", true);
     $("#prev").prop("disabled", true);
     $("#next").prop("disabled", false);
+    $("#last").prop("disabled", false);
     $("#save").prop("disabled", true);
 }
 
@@ -212,7 +212,6 @@ function getLast() {
     $("#prev").prop("disabled", false);
     $("#last").prop("disabled", true);
     $("#next").prop("disabled", true);
-    $("#reset").prop("disabled", true);
     $("#save").prop("disabled", true);
 }
 
