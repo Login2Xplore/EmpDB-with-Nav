@@ -1,3 +1,12 @@
+
+var jpdbBaseURL = "http://api.login2explore.com:5577";
+var jpdbIRL = "/api/irl";
+var jpdbIML = "/api/iml";
+var empDBName = "EMP-DB";
+var empRelationName = "EmpData";
+var connToken = "90936571|-31948846965960543|90934225";
+
+
 function disableCtrl(ctrl) {
     $("#new").prop("disabled", ctrl);
     $("#save").prop("disabled", ctrl);
@@ -13,25 +22,50 @@ function disableNav(ctrl) {
     $("#last").prop("disabled", ctrl);
 }
 
-function setRecNo(jsonObj) {
+function setCurrRecNo2LS(jsonObj) {
     var data = JSON.parse(jsonObj.data);
     localStorage.setItem("rec_no", data.rec_no);
 }
 
-function checkID() {
+function getCurrRecNoFromLS() {
+    return localStorage.getItem("rec_no");
+}
+
+function setFirstRecNo2LS(jsonObj) {
+//    alert("setFirstRecNo2LS(jsonObj)");
+    var data = JSON.parse(jsonObj.data);
+    localStorage.setItem("first_rec_no", data.rec_no);
+}
+
+function getFirstRecNoFromLS() {
+//    alert("getFirstRecNoFromLS()");
+    return localStorage.getItem("first_rec_no");
+}
+
+function setLastRecNo2LS(jsonObj) {
+//    alert("setLastRecNo2LS(jsonObj)");
+    var data = JSON.parse(jsonObj.data);
+    localStorage.setItem("last_rec_no", data.rec_no);
+}
+
+function getLastRecNoFromLS() {
+//    alert("getLastRecNoFromLS()");
+    return localStorage.getItem("last_rec_no");
+}
+
+function getEmpFromEmpID() {
     var empid = $("#empid").val();
     var jsonStr = {
         id: empid
     };
-    var getRequest = createGET_BY_KEYRequest("90937190|-31948797713594830|90931865", "Employee", "index", JSON.stringify(jsonStr));
+    var getRequest = createGET_BY_KEYRequest(connToken, empDBName, empRelationName, JSON.stringify(jsonStr));
     jQuery.ajaxSetup({async: false});
-    var jsonObj = executeCommandAtGivenBaseUrl(getRequest, "http://api.login2explore.com:5577", "/api/irl");
+    var jsonObj = executeCommandAtGivenBaseUrl(getRequest, jpdbBaseURL, jpdbIRL);
     jQuery.ajaxSetup({async: true});
     if (jsonObj.status === 400) {
         $("#save").prop("disabled", false);
         $("#reset").prop("disabled", false);
         $("#empname").focus();
-
     } else if (jsonObj.status === 200) {
         showData(jsonObj);
     }
@@ -61,28 +95,20 @@ function newForm() {
 function resetForm() {
     disableCtrl(true);
     disableNav(false);
-    var getCurRequest = createGET_BY_RECORDRequest("90937190|-31948797713594830|90931865", "Employee", "index", localStorage.getItem("rec_no"));
+
+    var getCurRequest = createGET_BY_RECORDRequest(connToken, empDBName, empRelationName, getCurrRecNoFromLS());
     jQuery.ajaxSetup({async: false});
     var result = executeCommand(getCurRequest, irlPartUrl);
     showData(result);
     jQuery.ajaxSetup({async: true});
+
     $("#new").prop("disabled", false);
     $("#edit").prop("disabled", false);
 }
 
 function showData(jsonObj) {
-    if (jsonObj.message === "EOF") {
-        $("#next").prop("disabled", true);
-        $("#last").prop("disabled", true);
-        return;
-    } else if (jsonObj.message === "BOF") {
-        $("#prev").prop("disabled", true);
-        $("#first").prop("disabled", true);
-        return;
-    }
-
     var data = (JSON.parse(jsonObj.data)).record;
-    setRecNo(jsonObj);
+    setCurrRecNo2LS(jsonObj);
 
     $("#empid").val(data.id);
     $("#empname").val(data.name);
@@ -98,12 +124,24 @@ function showData(jsonObj) {
     $("#hra").prop("disabled", true);
     $("#da").prop("disabled", true);
     $("#deduct").prop("disabled", true);
+
     $("#save").prop("disabled", true);
     $("#change").prop("disabled", true);
+    $("#reset").prop("disabled", true);
 
     $("#new").prop("disabled", false);
     $("#edit").prop("disabled", false);
-    $("#reset").prop("disabled", false);
+
+    if (getCurrRecNoFromLS() === getLastRecNoFromLS()) {
+        $("#next").prop("disabled", true);
+        $("#last").prop("disabled", true);
+    }
+
+    if (getCurrRecNoFromLS() === getFirstRecNoFromLS()) {
+        $("#prev").prop("disabled", true);
+        $("#first").prop("disabled", true);
+        return;
+    }
 }
 
 function validateData() {
@@ -158,10 +196,11 @@ function validateData() {
 }
 
 function getFirst() {
-    var getFirstRequest = createFIRST_RECORDRequest("90937190|-31948797713594830|90931865", "Employee", "index");
+    var getFirstRequest = createFIRST_RECORDRequest(connToken, empDBName, empRelationName);
     jQuery.ajaxSetup({async: false});
     var result = executeCommand(getFirstRequest, irlPartUrl);
     showData(result);
+    setFirstRecNo2LS(result);
     jQuery.ajaxSetup({async: true});
     $("#empid").prop("disabled", true);
     $("#first").prop("disabled", true);
@@ -171,18 +210,18 @@ function getFirst() {
 }
 
 function getPrev() {
-    var r = localStorage.getItem("rec_no");
+    var r = getCurrRecNoFromLS();
     if (r === 1)
     {
         $("#prev").prop("disabled", true);
         $("#first").prop("disabled", true);
     }
-    var getPrevRequest = createPREV_RECORDRequest("90937190|-31948797713594830|90931865", "Employee", "index", r);
+    var getPrevRequest = createPREV_RECORDRequest(connToken, empDBName, empRelationName, r);
     jQuery.ajaxSetup({async: false});
     var result = executeCommand(getPrevRequest, irlPartUrl);
     showData(result);
     jQuery.ajaxSetup({async: true});
-    var r = localStorage.getItem("rec_no");
+    var r = getCurrRecNoFromLS();
     if (r === 1) {
         $("#first").prop("disabled", true);
         $("#prev").prop("disabled", true);
@@ -191,9 +230,9 @@ function getPrev() {
 }
 
 function getNext() {
-    var r = localStorage.getItem("rec_no");
+    var r = getCurrRecNoFromLS();
 
-    var getPrevRequest = createNEXT_RECORDRequest("90937190|-31948797713594830|90931865", "Employee", "index", r);
+    var getPrevRequest = createNEXT_RECORDRequest(connToken, empDBName, empRelationName, r);
     jQuery.ajaxSetup({async: false});
     var result = executeCommand(getPrevRequest, irlPartUrl);
     showData(result);
@@ -203,9 +242,10 @@ function getNext() {
 }
 
 function getLast() {
-    var getLastRequest = createLAST_RECORDRequest("90937190|-31948797713594830|90931865", "Employee", "index");
+    var getLastRequest = createLAST_RECORDRequest(connToken, empDBName, empRelationName);
     jQuery.ajaxSetup({async: false});
     var result = executeCommand(getLastRequest, irlPartUrl);
+    setLastRecNo2LS(result);
     showData(result);
     jQuery.ajaxSetup({async: true});
     $("#first").prop("disabled", false);
@@ -221,10 +261,11 @@ function saveData() {
     if (jsonStrObj === "") {
         return "";
     }
-    var putRequest = createPUTRequest("90937190|-31948797713594830|90931865", jsonStrObj, "Employee", "index");
+    var putRequest = createPUTRequest(connToken, jsonStrObj, empDBName, empRelationName);
     jQuery.ajaxSetup({async: false});
     var jsonObj = executeCommand(putRequest, imlPartUrl);
     jQuery.ajaxSetup({async: true});
+    setCurrRecNo2LS(jsonObj);
     resetForm();
 }
 
@@ -244,15 +285,27 @@ function editData() {
 }
 
 function changeData() {
-
     jsonChg = validateData();
-    var updateRequest = createUPDATERecordRequest("90937190|-31948797713594830|90931865", jsonChg, "Employee", "index", localStorage.getItem("rec_no"));
+    var updateRequest = createUPDATERecordRequest(connToken, jsonChg, empDBName, empRelationName, getCurrRecNoFromLS());
     jQuery.ajaxSetup({async: false});
-    var jsonObj = executeCommandAtGivenBaseUrl(updateRequest, "http://api.login2explore.com:5577", "/api/iml");
+    var jsonObj = executeCommandAtGivenBaseUrl(updateRequest, jpdbBaseURL, jpdbIML);
     jQuery.ajaxSetup({async: true});
     console.log(jsonObj);
     resetForm();
     $("#empid").focus();
     $("#edit").focus();
 }
-localStorage.removeItem("size");
+
+function getFirstRecNo() {
+    var getFirstRequest = createFIRST_RECORDRequest(connToken, empDBName, empRelationName);
+    jQuery.ajaxSetup({async: false});
+    var result = executeCommand(getFirstRequest, irlPartUrl);
+    setFirstRecNo2LS(result);
+    jQuery.ajaxSetup({async: true});
+}
+
+function getLastRecNo() {
+    getLast();
+}
+
+//localStorage.removeItem("size");
