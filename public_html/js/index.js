@@ -1,10 +1,17 @@
 
+//var jpdbBaseURL = "http://122.168.196.216:5572";
+//var connToken = "1429107685|-280740642106422077|1429107543";
+
+//var jpdbBaseURL = "http://localhost:5572";
+//var connToken = "1429107685|-280740642106422077|1429107543";
+
 var jpdbBaseURL = "http://api.login2explore.com:5577";
+var connToken = "90936571|-31948846965960543|90934225";
+
 var jpdbIRL = "/api/irl";
 var jpdbIML = "/api/iml";
 var empDBName = "EMP-DB";
 var empRelationName = "EmpData";
-var connToken = "90936571|-31948846965960543|90934225";
 
 
 function disableCtrl(ctrl) {
