@@ -209,10 +209,10 @@ function getFirst() {
     showData(result);
     setFirstRecNo2LS(result);
     jQuery.ajaxSetup({async: true});
+    $("#empid").prop("disabled", true);
     $("#first").prop("disabled", true);
     $("#prev").prop("disabled", true);
     $("#next").prop("disabled", false);
-    $("#last").prop("disabled", false);
     $("#save").prop("disabled", true);
 }
 
