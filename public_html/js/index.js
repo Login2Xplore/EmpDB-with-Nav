@@ -5,14 +5,18 @@
 //var jpdbBaseURL = "http://localhost:5572";
 //var connToken = "1429107685|-280740642106422077|1429107543";
 
-var jpdbBaseURL = "http://api.login2explore.com:5577";
-var connToken = "90936571|-31948846965960543|90934225";
+//var jpdbBaseURL = "http://api.login2explore.com:5577";
+//var connToken = "90936571|-31948846965960543|90934225";
+
+var jpdbBaseURL = "http://api.jsonpowerdb.com:5577";
+var connToken = "1429107693|-280740700383286763|1429107683";
 
 var jpdbIRL = "/api/irl";
 var jpdbIML = "/api/iml";
 var empDBName = "EMP-DB";
 var empRelationName = "EmpData";
 
+setBaseUrl(jpdbBaseURL);
 
 function disableCtrl(ctrl) {
     $("#new").prop("disabled", ctrl);
@@ -114,6 +118,9 @@ function resetForm() {
 }
 
 function showData(jsonObj) {
+    if (jsonObj.status===400){
+        return;
+    }
     var data = (JSON.parse(jsonObj.data)).record;
     setCurrRecNo2LS(jsonObj);
 
@@ -308,6 +315,14 @@ function getFirstRecNo() {
     var result = executeCommand(getFirstRequest, irlPartUrl);
     setFirstRecNo2LS(result);
     jQuery.ajaxSetup({async: true});
+
+    showData(result);
+
+    $("#empid").prop("disabled", true);
+    $("#first").prop("disabled", true);
+    $("#prev").prop("disabled", true);
+    $("#next").prop("disabled", false);
+    $("#save").prop("disabled", true);
 }
 
 function getLastRecNo() {
