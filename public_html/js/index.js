@@ -5,6 +5,9 @@
 //var jpdbBaseURL = "http://localhost:5572";
 //var connToken = "1429107685|-280740642106422077|1429107543";
 
+//var jpdbBaseURL = "http://api.jsonpowerdb.com:5577";
+//var connToken = "1429107685|-280740642316404208|1429107497";
+
 var jpdbBaseURL = "http://api.login2explore.com:5577";
 var connToken = "90936571|-31948846965960543|90934225";
 
@@ -41,7 +44,11 @@ function getCurrRecNoFromLS() {
 function setFirstRecNo2LS(jsonObj) {
 //    alert("setFirstRecNo2LS(jsonObj)");
     var data = JSON.parse(jsonObj.data);
-    localStorage.setItem("first_rec_no", data.rec_no);
+    if (data.rec_no === undefined) {
+        localStorage.setItem("first_rec_no", 0);
+    } else {
+        localStorage.setItem("first_rec_no", data.rec_no);
+    }
 }
 
 function getFirstRecNoFromLS() {
@@ -52,7 +59,11 @@ function getFirstRecNoFromLS() {
 function setLastRecNo2LS(jsonObj) {
 //    alert("setLastRecNo2LS(jsonObj)");
     var data = JSON.parse(jsonObj.data);
-    localStorage.setItem("last_rec_no", data.rec_no);
+    if (data.rec_no === undefined) {
+        localStorage.setItem("last_rec_no", 0);
+    } else {
+        localStorage.setItem("last_rec_no", data.rec_no);
+    }
 }
 
 function getLastRecNoFromLS() {
@@ -271,7 +282,8 @@ function saveData() {
     jQuery.ajaxSetup({async: false});
     var jsonObj = executeCommand(putRequest, imlPartUrl);
     jQuery.ajaxSetup({async: true});
-    setCurrRecNo2LS(jsonObj);
+    setLastRecNo2LS(jsonObj);
+//    setCurrRecNo2LS(jsonObj);
     resetForm();
 }
 
