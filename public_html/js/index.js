@@ -71,12 +71,10 @@ function setFirstRecNo2LS(jsonObj) {
 }
 
 function getFirstRecNoFromLS() {
-//    alert("getFirstRecNoFromLS()");
     return localStorage.getItem("first_rec_no");
 }
 
 function setLastRecNo2LS(jsonObj) {
-//    alert("setLastRecNo2LS(jsonObj)");
     var data = JSON.parse(jsonObj.data);
     if (data.rec_no === undefined) {
         localStorage.setItem("last_rec_no", "0");
@@ -86,7 +84,6 @@ function setLastRecNo2LS(jsonObj) {
 }
 
 function getLastRecNoFromLS() {
-//    alert("getLastRecNoFromLS()");
     return localStorage.getItem("last_rec_no");
 }
 
@@ -108,11 +105,6 @@ function getEmpFromEmpID() {
     jQuery.ajaxSetup({async: true});
 }
 
-/**
- * A new form for data entry will be activated.
- * 
- * @returns {undefined}
- */
 function newForm() {
     makeDataFormEmpty();
 
@@ -162,7 +154,6 @@ function resetForm() {
 
 function showData(jsonObj) {
     if (jsonObj.status === 400) {
-//        alert("No record present");
         return;
     }
     var data = (JSON.parse(jsonObj.data)).record;
@@ -326,12 +317,8 @@ function saveData() {
 }
 
 function editData() {
+    disableForm(false);
     $("#empid").prop("disabled", true);
-    $("#empname").prop("disabled", false);
-    $("#empsal").prop("disabled", false);
-    $("#hra").prop("disabled", false);
-    $("#da").prop("disabled", false);
-    $("#deduct").prop("disabled", false);
     $("#empname").focus();
 
     disableNav(true);
@@ -378,10 +365,7 @@ function isOnlyOneRecordPresent() {
 }
 
 function checkForNoOrOneRecord() {
-//    alert(getFirstRecNoFromLS());
-//    alert(getLastRecNoFromLS());
     if (isNoRecordPresent()) {
-//        alert("both");
         disableForm(true);
         disableNav(true);
         disableCtrl(true);
@@ -389,7 +373,6 @@ function checkForNoOrOneRecord() {
         return;
     }
     if (isOnlyOneRecordPresent()) {
-//        alert("one");
         disableForm(true);
         disableNav(true);
         disableCtrl(true);
@@ -397,11 +380,9 @@ function checkForNoOrOneRecord() {
         $("#edit").prop("disabled", false);
         return;
     }
-//    alert("none");
 }
 
 initEmpForm();
 getFirstRecNo();
 getLastRecNo();
 checkForNoOrOneRecord();
-//localStorage.removeItem("size");
